@@ -81,7 +81,7 @@
                     <pre>su -</pre>
                     <button class="copy-btn" data-copy="su -">Copy</button>
                 </div>
-		<p>Masukkan password root: <strong></strong>123</strong> dan selanjutnya tekan enter</p> 
+				<p>*Masukkan password root '123'</p>
             </li>
 
             <li>
@@ -144,7 +144,28 @@ libtex-encode-perl libio-string-perl libdbd-mysql-perl python3-html2text make li
                     <pre>adduser eprints</pre>
                     <button class="copy-btn" data-copy="adduser eprints">Copy</button>
                 </div>
-                <p>Masukkan password dan deskripsi untuk user Eprints sesuai petunjuk di terminal.</p>
+                Ikuti semua petunjuk dan jawab pertanyaanya sesuai kebutuhan seperti contoh di bawah ini. Untuk mengekskusi jawaban gunakan tombol <strong>Enter</strong>. Untuk pengetikan password tidak ditampilkan.</p>
+				<pre>
+Adding user `eprints' ...
+Adding new group `eprints' (1001) ...
+Adding new user `eprints' (1001) with group `eprints (1001)' ...
+Creating home directory `/home/eprints' ...
+Copying files from `/etc/skel' ...
+New password:rahasia <strong>[enter]</strong>
+Retype new password:rahasia <strong>[enter]</strong>
+passwd: password updated successfully
+Changing the user information for eprints
+Enter the new value, or press ENTER for the default
+        Full Name []:<strong>[enter]</strong>
+        Room Number []:<strong>[enter]</strong>
+        Work Phone []:<strong>[enter]</strong>
+        Home Phone []:<strong>[enter]</strong>
+        Other []:<strong>[enter]</strong>
+Is the information correct? [Y/n] y <strong>[enter]</strong>
+Adding new user `eprints' to supplemental / extra groups `users' ...
+Adding user `eprints' to group `users' ...
+</pre>
+				
             </li>
 
             <li>
@@ -235,7 +256,7 @@ export APACHE_RUN_GROUP=www-data
                     <button class="copy-btn" data-copy="bin/epadmin create pub">Copy</button>
                 </div>
 
-<p>Ikuti semua petunjuk dan jawab pertanyaanya sesuai kebutuhan seperti contoh di bawah ini. Untuk mengekskusi jawaban gunakan tombol <strong>Enter</strong></p>
+<p>Ikuti semua petunjuk dan jawab pertanyaanya sesuai kebutuhan seperti contoh di bawah ini. Untuk mengekskusi jawaban gunakan tombol <strong>Enter</strong>. Untuk pengetikan password tidak ditampilkan.</p>
 <pre>
 Create a pub Repository
 Please select an ID for the repository, which will be used to create a directory
