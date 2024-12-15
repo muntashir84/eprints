@@ -442,11 +442,22 @@ Don't forget to register your repository at http://roar.eprints.org/
                 </div>
             </li>
 			<li>
-                <strong>Tampilkan konfigurasi antarmuka jaringan, kemudian catat inet alamat IP dari virtual machine debian 12</strong>
+                <strong>Tampilkan konfigurasi antarmuka jaringan, kemudian catat inet alamat IP dari virtual machine debian 12 pada bagian yang bertanda xxx</strong>
                 <div class="code-block">
                     <pre>ifconfig</pre>
                     <button class="copy-btn" data-copy="ifconfig">Copy</button>
                 </div>
+		<pre>
+	ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet xxx.xxx.xxx.xxx  netmask 255.255.255.0  broadcast 192.168.83.255
+        inet6 fe80::20c:29ff:fe4b:9846  prefixlen 64  scopeid 0x20<link>
+        ether 00:0c:29:4b:98:46  txqueuelen 1000  (Ethernet)
+        RX packets 183076  bytes 261621540 (249.5 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 49109  bytes 3753808 (3.5 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+		</pre>
             </li>
 			<li>
                 <strong>Tambahkan entri host pada sistem operasi windows agar hostname repositori yang terinstal di Debian (Virtual Machine) dapat diakses di browser windows.</strong>
