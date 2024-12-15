@@ -21,9 +21,9 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        h1 {
+        h1, h3 {
             text-align: center;
-            color: #444;
+						
         }
         .code-block {
             background: #f4f4f4;
@@ -32,7 +32,7 @@
             margin: 20px 0;
             overflow-x: auto;
         }
-        .code-block pre {
+		        .code-block pre {
             margin: 0;
             font-family: monospace;
         }
@@ -53,6 +53,18 @@
             display: none;
             margin-top: 10px;
             color: #4caf50;
+        }
+        iframe {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9; /* Responsif untuk video */				
+            border: none;				
+        }
+        ol {
+            padding-left: 15px;
+        }
+        li {
+            margin-bottom: 20px;			   
         }
     </style>
 </head>
