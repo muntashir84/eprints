@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instalasi EPrints 3.4.6 di Debian 12 Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        .code-block {
+            background: #f4f4f4;
+            border-left: 4px solid #4caf50;
+            padding: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            margin: 0;
+            font-family: monospace;
+        }
+        .copy-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background: #45a049;
+        }
+        .notification {
+            display: none;
+            margin-top: 10px;
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tutorial Instalasi EPrints 3.4.6 di Debian 12 Server</h1>
+	<div align="center">
+    <h4>&copy; 2024 Muntashir. All rights reserved.</h4>
+	</div>
+        <ol>
+            <li>
+                <strong>Masuk sebagai pengguna root</strong>
+                <div class="code-block">
+                    <pre>su -</pre>
+                    <button class="copy-btn" data-copy="su -">Copy</button>
+                </div>
+            </li>
+
+            <li>
+                <strong>Menginstal semua aplikasi dependensi untuk EPrints</strong>
+                <div class="code-block">
+                    <pre>apt-get install perl libncurses5 libselinux1 apache2 libapache2-mod-perl2 libxml-libxml-perl \
+libunicode-string-perl libterm-readkey-perl libmime-lite-perl libmime-types-perl libdigest-sha-perl \
+libdbd-mysql-perl libxml-parser-perl libxml2-dev libxml-twig-perl libarchive-any-perl libjson-perl \
+liblwp-protocol-https-perl libtext-unidecode-perl lynx wget ghostscript poppler-utils antiword elinks \
+texlive-base texlive-base-bin psutils imagemagick adduser tar gzip unzip libsearch-xapian-perl \
+libtex-encode-perl libio-string-perl libdbd-mysql-perl python3-html2text make libexpat1-dev libxslt1-dev -y</pre>
+                    <button class="copy-btn" data-copy="apt-get install perl libncurses5 libselinux1 apache2 libapache2-mod-perl2 libxml-libxml-perl libunicode-string-perl libterm-readkey-perl libmime-lite-perl libmime-types-perl libdigest-sha-perl libdbd-mysql-perl libxml-parser-perl libxml2-dev libxml-twig-perl libarchive-any-perl libjson-perl liblwp-protocol-https-perl libtext-unidecode-perl lynx wget ghostscript poppler-utils antiword elinks texlive-base texlive-base-bin psutils imagemagick adduser tar gzip unzip libsearch-xapian-perl libtex-encode-perl libio-string-perl libdbd-mysql-perl python3-html2text make libexpat1-dev libxslt1-dev -y">Copy</button>
+                </div>
+            </li>
+
+            <li>
+                <strong>Menginstal server dan klien MariaDB</strong>
+                <div class="code-block">
+                    <pre>apt-get install mariadb-server mariadb-client libmariadb-dev -y</pre>
+                    <button class="copy-btn" data-copy="apt-get install mariadb-server mariadb-client libmariadb-dev -y">Copy</button>
+                </div>
+            </li>
+
+            <li>
+                <strong>Masuk ke aplikasi MariaDB</strong>
+                <div class="code-block">
+                    <pre>mariadb</pre>
+                    <button class="copy-btn" data-copy="mariadb">Copy</button>
+                </div>
+            </li>
+
+            <li>
+                <strong>Tambahkan perintah di bawah untuk membuat username untuk database Eprints</strong>
+                <p>*Password 'rahasia' dapat diganti sesuai kebutuhan</p>
+                <div class="code-block">
+                    <pre>CREATE USER 'eprints'@'localhost' IDENTIFIED by 'rahasia';</pre>
+                    <button class="copy-btn" data-copy="CREATE USER 'eprints'@'localhost' IDENTIFIED by 'rahasia';">Copy</button>
+                </div>
+            </li>
+
+            <li>
+                <strong>Tambahkan perintah di bawah untuk pengaturan hak akses database</strong>
+                <div class="code-block">
+                    <pre>GRANT ALL PRIVILEGES ON *.* TO 'eprints'@'localhost' WITH GRANT OPTION;</pre>
+                    <button class="copy-btn" data-copy="GRANT ALL PRIVILEGES ON *.* TO 'eprints'@'localhost' WITH GRANT OPTION;">Copy</button>
+                </div>
+            </li>
+
+            <li>
+                <strong>Keluar dari aplikasi MariaDB</strong>
+                <div class="code-block">
+                    <pre>exit</pre>
+                    <button class="copy-btn" data-copy="exit">Copy</button>
+                </div>
+            </li>
+
+            <li>
+                <strong>Membuat user Eprints</strong>
+                <div class="code-block">
+                    <pre>adduser eprints</pre>
+                    <button class="copy-btn" data-copy="adduser eprints">Copy</button>
+                </div>
+                <p>Masukkan password dan deskripsi untuk user Eprints sesuai petunjuk di terminal.</p>
+            </li>
+
+            <li>
+                <strong>Konfigurasi Apache untuk menjalankan pengguna Eprints</strong>
+                <p>Buka file <code>envvars</code> dengan teks editor nano dengan perintah berikut:</p>
+                <div class="code-block">
+                    <pre>nano /etc/apache2/envvars</pre>
+                    <button class="copy-btn" data-copy="nano /etc/apache2/envvars">Copy</button>
+                </div>
+                <p>Salin dan tambahkan baris berikut:</p>
+                <div class="code-block">
+                    <pre>
+export APACHE_RUN_USER=eprints
+export APACHE_RUN_GROUP=eprints
+					</pre>
+                    <button class="copy-btn" data-copy="export APACHE_RUN_USER=eprints
+export APACHE_RUN_GROUP=eprints">Copy</button>
+                </div>
+				
+				<p>Arahkan titik pengetikan ke bagian baris kosong, kemudian klik kanan untuk tempel script. Seperti tampilan di bawah ini:</p> 
+
+				<pre>
+# Since there is no sane way to get the parsed apache2 config in scripts, some
+# settings are defined via environment variables and then used in apache2ctl,
+# /etc/init.d/apache2, /etc/logrotate.d/apache2, etc.
+
+export APACHE_RUN_USER=www-data
+export APACHE_RUN_GROUP=www-data
+<strong>export APACHE_RUN_USER=eprints</strong>
+<strong>export APACHE_RUN_GROUP=eprints</strong>
+    </pre>
+				
+                <p>Simpan perubahan dengan menekan <code>Ctrl + X</code>, lalu ketik <code>y</code> dan tekan <code>Enter</code>.</p>
+            </li>
+			<li>
+                <strong>Download file source EPrints dan repositori variasi publikasi</strong>
+                <div class="code-block">
+                    <pre>wget https://files.eprints.org/3097/5/eprints-3.4.6.tar.gz https://files.eprints.org/3097/6/eprints-3.4.6-flavours.tar.gz</pre>
+                    <button class="copy-btn" data-copy="wget https://files.eprints.org/3097/5/eprints-3.4.6.tar.gz https://files.eprints.org/3097/6/eprints-3.4.6-flavours.tar.gz">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Ekstrak file tar source EPrints dan repositori variasi publikasi</strong>
+                <div class="code-block">
+                    <pre>tar xvzf eprints-3.4.6.tar.gz && tar xvzf eprints-3.4.6-flavours.tar.gz</pre>
+                    <button class="copy-btn" data-copy="tar xvzf eprints-3.4.6.tar.gz && tar xvzf eprints-3.4.6-flavours.tar.gz">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Pindah ke folder source EPrints</strong>
+                <div class="code-block">
+                    <pre>cd eprints-3.4.6</pre>
+                    <button class="copy-btn" data-copy="cd eprints-3.4.6">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Jalankan perintah di bawah untuk konfigurasi EPrints</strong>
+                <div class="code-block">
+                    <pre>./configure</pre>
+                    <button class="copy-btn" data-copy="./configure">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Instalasi Eprints berdasarkan kompilasi dependensi</strong>
+                <div class="code-block">
+                    <pre>make install</pre>
+                    <button class="copy-btn" data-copy="make install">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Beralih ke pengguna EPrints</strong>
+                <div class="code-block">
+                    <pre>su - eprints</pre>
+                    <button class="copy-btn" data-copy="su - eprints">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Pindah ke folder EPrints</strong>
+                <div class="code-block">
+                    <pre>cd /opt/eprints3</pre>
+                    <button class="copy-btn" data-copy="cd /opt/eprints3">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Jalankan aplikasi epadmin untuk membuat repositori beserta setting Eprints</strong>
+                <div class="code-block">
+                    <pre>bin/epadmin create pub</pre>
+                    <button class="copy-btn" data-copy="bin/epadmin create pub">Copy</button>
+                </div>
+
+<p>Ikuti semua petunjuk dan jawab pertanyaanya sesuai kebutuhan seperti contoh di bawah ini. Untuk mengekskusi jawaban gunakan tombol <strong>Enter</strong></p>
+<pre>
+Create a pub Repository
+Please select an ID for the repository, which will be used to create a directory
+and identify the repository. Lower case letters, numbers and underscores, may not start with
+a number or underscore. examples: "repositori", "digilib" or "perpustakaan"
+Archive ID? repositori <strong>[enter]</strong>
+
+Ok. I've created the initial config files and directory structure.
+I've also created a "disk0" directory under documents/ if you want
+your full texts to be stored on a different partition then remove
+the disk0, and create a symbolic link to the directory you wish to
+store the full texts in. Additional links may be placed here to be
+used when the first is full.
+Configure vital settings? [yes] ? <strong>[enter]</strong>
+
+Please enter the fully qualified hostname of the repository.
+For a production system we recommend against using the real hostname of the
+machine.
+Example: repositori.footle.ac.uk
+Hostname?repositori.tes.ac.id <strong>[enter]</strong> *masukkan alamat lokal untuk memanggil aplikasi Eprints di browser
+
+Please enter the port of the webserver. This is probably 80, but you may wish to run apache on a different 
+port if you are experimenting.
+
+Webserver Port [80] ? <strong>[enter]</strong>
+
+Enter a single hash (#) when you're done.
+
+Alias (enter # when done) [#] ? <strong>[enter]</strong>
+
+Please enter the path part of the repository's base URL. This should probably
+be '/'.
+Path [/] ? <strong>[enter]</strong>
+
+If you will use https for your user pages (including login) enter the https hostname
+here, or leave blank when using http only.
+
+HTTPS Hostname [] ? <strong>[enter]</strong>
+
+Administrator Email? muntashir.id@gmail.com  <strong>[enter]</strong> *input alamat email sesuai kebutuhan
+
+Enter the name of the repository in the default language. If you wish to enter other titles 
+for other languages or enter non ascii characters then you may enter something as a placeholder and edit
+the XML config file which this script generates.
+Archive Name [Test Repository] ? UIN Imam Bonjol Repository <strong>[enter]</strong>
+
+Enter the name of the organisation in the default language. Again, if you wish to enter other titles for 
+other languages or enter non ascii characters then you may enter something as a placeholder and edit the 
+XML config file which this script generates.
+
+Organisation Name [Organisation of Test] ? UIN Imam Bonjol <strong>[enter]</strong>
+
+Write these core settings? [yes] ? <strong>[enter]</strong>
+
+Configure database? [yes] ? <strong>[enter]</strong>
+
+Database Name [repositori] ? <strong>[enter]</strong>
+
+MySQL Host [localhost] ? <strong>[enter]</strong>
+
+You probably don't need to set socket and port (unless you do!?).
+
+MySQL Port (# for no setting) [#] ? <strong>[enter]</strong>
+
+MySQL Socket (# for no setting) [#] ? <strong>[enter]</strong>
+
+Database User [repositori] ? <strong>[enter]</strong>
+
+Database Password [X4lFjc6Dp2h9zmli] ? <strong>[enter]</strong>
+
+Database Engine [InnoDB] ? <strong>[enter]</strong>
+
+Write these database settings? [yes] ? <strong>[enter]</strong>
+
+Create database "repositori" [yes] ? <strong>[enter]</strong>
+
+Database Superuser Username [root] ? eprints <strong>[enter]</strong>
+
+Database Superuser Password? rahasia <strong>[enter]</strong> *password tidak ditampilkan, pastikan diketik dengan hati-hati
+
+Create database tables? [yes] ? <strong>[enter]</strong>
+
+Create an initial user? [yes] ? <strong>[enter]</strong>
+
+Enter a username [admin] ? <strong>[enter]</strong>
+
+Select a user type (user|editor|admin) [admin] ? <strong>[enter]</strong>
+
+Enter Password? rahasia <strong>[enter]</strong>
+
+Email? muntashir.id@gmail.com
+
+Do you want to build the static web pages? [yes] ? <strong>[enter]</strong>
+
+Do you want to import the LOC subjects and sample divisions? [yes] ? <strong>[enter]</strong>
+
+Do you want to update the apache config files? (you still need to add the 'Include' line) 
+[yes] ? <strong>[enter]</strong>
+
+Add the following line to your apache configuration:
+        Include /opt/eprints3/cfg/apache.conf
+You must restart apache for any changes to take effect!
+--------------------------------------------------------------------------
+That seemed to more or less work ...
+--------------------------------------------------------------------------
+Now make any required changes to the cfg files.
+Note that changing the metadata configuration may require the database
+tables to be regenerated. epadmin erase_eprints will regenerate the
+eprints and documents tables only. erase_data will regenerate everything.
+(nb. these also do erase the contents of the tables, and any uploaded
+files).
+Make sure that your main apache config file contains the line:
+ Include /opt/eprints3/cfg/apache.conf
+Then stop and start your webserver:
+Often:
+ /etc/rc.d/init.d/httpd stop
+ /etc/rc.d/init.d/httpd start
+(or maybe /usr/local/apache/bin/apachectl graceful)
+And then try connecting to your repository.
+--------------------------------------------------------------------------
+Don't forget to register your repository at http://roar.eprints.org/
+</pre>
+			<li>
+                <strong>Keluar dari pengguna EPrints</strong>
+                <div class="code-block">
+                    <pre>exit</pre>
+                    <button class="copy-btn" data-copy="exit">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Buat file configurasi <code>eprints.conf</code> di apache dengan menggunakan teks editor nano dengan menjalankan perintah di bawah ini:</strong>
+                <div class="code-block">
+                    <pre>nano /etc/apache2/sites-available/eprints.conf</pre>
+                    <button class="copy-btn" data-copy="nano /etc/apache2/sites-available/eprints.conf">Copy</button>
+                </div>
+				
+				
+<p>Setelah itu, salin script di bawah ini dan tempelkan dengan cara klik kanan di baris awal dari teks editor file <code>eprints.conf</code></p>
+				<div class="code-block">
+                    <pre>Include /opt/eprints3/cfg/apache.conf</pre>
+                    <button class="copy-btn" data-copy="Include /opt/eprints3/cfg/apache.conf">Copy</button>
+                </div>
+				<p>Simpan perubahan dengan menekan <code>Ctrl + X</code>, lalu ketik <code>y</code> dan tekan <code>Enter</code>.</p>
+            </li>
+			<li>
+                <strong>Aktifkan konfigurasi virtual host dari aplikasi EPrints</strong>
+                <div class="code-block">
+                    <pre>a2ensite eprints</pre>
+                    <button class="copy-btn" data-copy="a2ensite eprints">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Muat ulang konfigurasi apache</strong>
+                <div class="code-block">
+                    <pre>systemctl reload apache2</pre>
+                    <button class="copy-btn" data-copy="systemctl reload apache2">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Non-aktifkan situs web default apache</strong>
+                <div class="code-block">
+                    <pre>a2dissite 000-default</pre>
+                    <button class="copy-btn" data-copy="a2dissite 000-default">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Muat ulang konfigurasi apache</strong>
+                <div class="code-block">
+                    <pre>systemctl reload apache2</pre>
+                    <button class="copy-btn" data-copy="systemctl reload apache2">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Restart service apache</strong>
+                <div class="code-block">
+                    <pre>service apache2 restart</pre>
+                    <button class="copy-btn" data-copy="service apache2 restart">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Install aplikasi net-tools untuk mengetahui informasi jaringan dari virtual machine</strong>
+                <div class="code-block">
+                    <pre>apt install net-tools</pre>
+                    <button class="copy-btn" data-copy="apt install net-tools">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Tampilkan konfigurasi antarmuka jaringan, kemudian catat inet alamat IP dari virtual machine debian 12</strong>
+                <div class="code-block">
+                    <pre>ifconfig</pre>
+                    <button class="copy-btn" data-copy="ifconfig">Copy</button>
+                </div>
+            </li>
+			<li>
+                <strong>Tambahkan entri host pada sistem operasi windows agar hostname repositori yang terinstal di Debian (Virtual Machine) dapat diakses di browser windows.</strong>
+                <div class="code-block">
+                    <pre>ifconfig</pre>
+                    <button class="copy-btn" data-copy="ifconfig">Copy</button>
+                </div>
+				<pre>
+1.Buka Notepad sebagai Administrator:
+  • Klik kanan pada ikon Notepad atau perangkat lunak teks editor lainnya.
+  • Pilih "Run as administrator."
+2.Buka File Hosts:
+  • Di jendela Notepad, klik menu "File" > "Open"
+  • Navigasi ke direktori C:\Windows\System32\drivers\etc\
+  • Pilih opsi "All Files" di bagian bawah jendela.
+  • Pilih file hosts dan klik "Open".
+3.Tambahkan Entri Baru:
+  • Di bagian akhir file hosts, tambahkan baris baru yang menjelaskan ip address dan hostname repositori.
+  • Formatnya adalah &lt;alamat_IP&gt;&nbsp;&lt;space&gt;&nbsp;&lt;nama_domain&gt; contoh: <strong>192.168.253.153 repositori.tes.ac.id</strong>
+4.Simpan perubahan dengan menekan Ctrl + S
+</pre>
+            </li>
+			<li>
+                <strong>Buka Browser (Chrome, Firefox, Edge, Opera dll.) dan coba akses hostname repositori pada address bar</strong>
+                <div class="code-block">
+                    <pre>repositori.tes.ac.id</pre>
+                    <button class="copy-btn" data-copy="repositori.tes.ac.id">Copy</button>
+                </div>
+            </li>
+			
+            </li>
+        </ol>
+    </div>
+
+    <script>
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const textToCopy = button.getAttribute('data-copy');
+                navigator.clipboard.writeText(textToCopy);
+                const notification = document.createElement('p');
+                notification.textContent = 'Script telah disalin!';
+                notification.style.color = '#4caf50';
+                button.parentNode.appendChild(notification);
+                setTimeout(() => {
+                    notification.remove();
+                }, 2500);
+            });
+        });
+    </script>
+	<title>Video Tutorial EPrints</title>
+</head>
+<body>
+    <div align="center">
+	<div class="container">
+        <h3>Video Tutorial Instalasi EPrints 3.4.5 di Debian 12 Server Melalui VMware Windows</h3>
+        <iframe 
+            width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/27RdesAKZ9I" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
+</body>
+</html>
